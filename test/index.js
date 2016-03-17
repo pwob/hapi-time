@@ -11,9 +11,10 @@ const lab = exports.lab = Lab.script();
 
 const describe = lab.describe;
 const it = lab.it;
+const before = lab.before;
 const beforeEach = lab.beforeEach;
-const afterEach = lab.afterEach;
 const after = lab.after;
+const afterEach = lab.afterEach;
 
 const MongoUri = 'localhost:27017/schedule_jobs_test';
 const JobsDir = __dirname + '/jobs';
@@ -33,13 +34,13 @@ function deleteAllRemainingJobs(done) {
 
 describe('hapi-time', () => {
 
-    beforeEach((done) => {
-        server = new Hapi.Server();
-        server.connection();
+    before((done) => {
         done();
     });
 
-    afterEach((done) => {
+    beforeEach((done) => {
+        server = new Hapi.Server();
+        server.connection();
         done();
     });
 
@@ -136,6 +137,10 @@ describe('hapi-time', () => {
                 done(err);
             }
         });
+    });
+
+    afterEach((done) => {
+        done();
     });
 
     after((done) => {
