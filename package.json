@@ -1,0 +1,31 @@
+{
+  "name": "hapi-time",
+  "version": "1.0.0",
+  "description": "Hapi tasks scheduling",
+  "main": "index.js",
+  "scripts": {
+    "test": "lab -c"
+  },
+  "keywords": [
+    "schedule",
+    "task",
+    "hapi",
+    "plugin",
+    "jobs",
+    "time",
+    "agenda"
+  ],
+  "author": "angelstoone",
+  "license": "MIT",
+  "dependencies": {
+    "agenda": "^0.8.0",
+    "joi": "^8.0.4",
+    "lodash": "^4.6.1",
+    "require-all": "^2.0.0"
+  },
+  "devDependencies": {
+    "code": "^2.1.0",
+    "hapi": "^13.2.1",
+    "lab": "^10.2.0"
+  }
+}
