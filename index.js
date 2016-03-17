@@ -2,7 +2,6 @@
 
 const Agenda = require('agenda');
 const RequireAll = require('require-all');
-const FileSystem = require('fs');
 const _ = require('lodash');
 const Joi = require('joi');
 
@@ -58,10 +57,7 @@ exports.register = function (server, options, next) {
         server.log(['agenda', 'error'], { err: err, job: job.attrs });
     });
 
-    let jobs = {};
-    if (options.jobs && FileSystem.existsSync(options.jobs)) {
-        jobs = RequireAll(options.jobs);
-    }
+    let jobs = RequireAll(options.jobs);
 
     _.forIn(jobs, (value, key) => {
         let name;

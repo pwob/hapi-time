@@ -72,6 +72,69 @@ describe('hapi-time', () => {
 
     });
 
+    it('should cancel a disabled every job', (done) => {
+        server.register({
+            register: HapiTime,
+            options: {
+                mongoUri: MongoUri,
+                jobs: JobsDir,
+                every: {
+                    'say-hello': {
+                        enabled: false
+                    }
+                }
+            }
+        }, (err) => {
+            if (!err) {
+                setTimeout(() => {
+                    const agenda = server.plugins['hapi-time'].agenda;
+                    agenda.cancel({name: 'say-hello'}, function(err, numRemoved) {
+                        if (!err && numRemoved == 1) {
+                            done();
+                        } else {
+                            done(err);
+                        }
+                    });
+                }, 100);
+            } else {
+                done(err);
+            }
+        });
+
+    });
+
+    it('should run an every job enabled with interval', (done) => {
+        server.register({
+            register: HapiTime,
+            options: {
+                mongoUri: MongoUri,
+                jobs: JobsDir,
+                every: {
+                    'say-hello': {
+                        interval: '10 seconds',
+                        enabled: true
+                    }
+                }
+            }
+        }, (err) => {
+            if (!err) {
+                setTimeout(() => {
+                    const agenda = server.plugins['hapi-time'].agenda;
+                    agenda.cancel({name: 'say-hello'}, function(err, numRemoved) {
+                        if (!err && numRemoved == 1) {
+                            done();
+                        } else {
+                            done(err);
+                        }
+                    });
+                }, 100);
+            } else {
+                done(err);
+            }
+        });
+
+    });
+
     it('should run a scheduled job', (done) => {
         server.register({
             register: HapiTime,
@@ -80,6 +143,37 @@ describe('hapi-time', () => {
                 jobs: JobsDir,
                 schedule: {
                     'every day at 3am': 'say-hello'
+                }
+            }
+        }, (err) => {
+            if (!err) {
+                setTimeout(() => {
+                    const agenda = server.plugins['hapi-time'].agenda;
+                    agenda.cancel({name: 'say-hello'}, function(err, numRemoved) {
+                        if (!err && numRemoved == 1) {
+                            done();
+                        } else {
+                            done(err);
+                        }
+                    });
+                }, 100);
+            } else {
+                done(err);
+            }
+        });
+    });
+
+    it('should cancel a disabled scheduled job', (done) => {
+        server.register({
+            register: HapiTime,
+            options: {
+                mongoUri: MongoUri,
+                jobs: JobsDir,
+                schedule: {
+                    'every day at 3am': {
+                        job: 'say-hello',
+                        enabled: false
+                    }
                 }
             }
         }, (err) => {
