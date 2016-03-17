@@ -64,7 +64,7 @@ describe('hapi-time', () => {
                             done(err);
                         }
                     });
-                }, 2000);
+                }, 100);
             } else {
                 done(err);
             }
@@ -93,7 +93,7 @@ describe('hapi-time', () => {
                             done(err);
                         }
                     });
-                }, 2000);
+                }, 100);
             } else {
                 done(err);
             }
