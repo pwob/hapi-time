@@ -43,7 +43,7 @@ describe('hapi-time', () => {
         done();
     });
 
-    it('should fail if no mongoUri is specified', (done) => {
+    it('should fail if no \'mongoUri\' and \'jobs\' are specified', (done) => {
         server.register({
             register: HapiTime,
             options: {}
@@ -54,7 +54,7 @@ describe('hapi-time', () => {
         });
     });
 
-    it('should run a job every 10', (done) => {
+    it('should run a repeating job', (done) => {
         server.register({
             register: HapiTime,
             options: {
@@ -74,29 +74,7 @@ describe('hapi-time', () => {
 
     });
 
-    it('should run a scheduled and a recurrent job', (done) => {
-        server.register({
-            register: HapiTime,
-            options: {
-                mongoUri: MongoUri,
-                jobs: JobsDir,
-                every: {
-                    'say-hello': '10 seconds'
-                },
-                schedule: {
-                    'every day at 3am': 'i-am-your-father'
-                }
-            }
-        }, (err) => {
-            if (!err) {
-                done();
-            } else {
-                done(err);
-            }
-        });
-    });
-
-    it('should run an every job enabled with interval', (done) => {
+    it('should run a repeating job with options', (done) => {
         server.register({
             register: HapiTime,
             options: {
@@ -138,8 +116,32 @@ describe('hapi-time', () => {
         });
     });
 
+    it('should run scheduled and repeating jobs together', (done) => {
+        server.register({
+            register: HapiTime,
+            options: {
+                mongoUri: MongoUri,
+                jobs: JobsDir,
+                every: {
+                    'say-hello': '10 seconds'
+                },
+                schedule: {
+                    'every day at 3am': 'i-am-your-father'
+                }
+            }
+        }, (err) => {
+            if (!err) {
+                done();
+            } else {
+                done(err);
+            }
+        });
+    });
+
     after((done) => {
-        deleteAllRemainingJobs(done);
+        server.stop(() => {
+            deleteAllRemainingJobs(done);
+        });
     });
 
 });

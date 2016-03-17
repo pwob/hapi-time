@@ -122,16 +122,16 @@ exports.register = function (server, options, next) {
         });
     });
 
-    // http://hapijs.com/api#server-events
-    server.on('start', () => {
-        // Server starting...
-    });
-
     // http://hapijs.com/api#serverexposekey-value
     server.expose('agenda', agenda);
 
     // http://hapijs.com/api#serverbindcontext
     server.bind({ agenda: agenda });
+
+    // http://hapijs.com/api#server-events
+    server.on('start', () => {
+        // Server starting...
+    });
 };
 
 exports.register.attributes = {
