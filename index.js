@@ -72,10 +72,9 @@ exports.register = function (server, options, next) {
             name = value.name;
             method = value.job;
 
-            delete value.name;
-            delete value.job;
-
-            opts = value;
+            opts = Object.assign({}, value);
+            delete opts.name;
+            delete opts.job;
         }
 
         agenda.define(name, opts, (job, done) => {
