@@ -23,13 +23,14 @@ const internals = {
 };
 
 exports.register = function (server, options, next) {
-
+    // Validating the options
     const validateOptions = internals.optionsSchema.validate(options);
     if (validateOptions.error) {
         return next(validateOptions.error);
     }
     options = validateOptions.value;
 
+    // Configuring Agenda
     const agenda = new Agenda();
     agenda
         .database(options.mongoUri)
@@ -57,8 +58,8 @@ exports.register = function (server, options, next) {
         server.log(['agenda', 'error'], { err: err, job: job.attrs });
     });
 
+    // Retrieve all the jobs from the file system and define them in Agenda
     let jobs = RequireAll(options.jobs);
-
     _.forIn(jobs, (value, key) => {
         let name;
         let method;
