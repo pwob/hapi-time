@@ -20,17 +20,15 @@ const JobsDir = __dirname + '/jobs';
 
 let server = null;
 
-function deleteJobWithDelay(jobName, done) {
-    setTimeout(() => {
-        const agenda = server.plugins['hapi-time'].agenda;
-        agenda.cancel({ name: jobName }, function(err, numRemoved) {
-            if (!err && numRemoved == 1) {
-                done();
-            } else {
-                done(err);
-            }
-        });
-    }, 100);
+function deleteAllRemainingJobs(done) {
+    const agenda = server.plugins['hapi-time'].agenda;
+    agenda.cancel({}, function(err, numRemoved) {
+        if (!err && numRemoved == 1) {
+            done();
+        } else {
+            done(err);
+        }
+    });
 }
 
 describe('hapi-time', () => {
@@ -56,7 +54,7 @@ describe('hapi-time', () => {
         });
     });
 
-    it('should run an every job', (done) => {
+    it('should run a job every 10', (done) => {
         server.register({
             register: HapiTime,
             options: {
@@ -68,7 +66,7 @@ describe('hapi-time', () => {
             }
         }, (err) => {
             if (!err) {
-                deleteJobWithDelay('say-hello', done);
+                done();
             } else {
                 done(err);
             }
@@ -76,26 +74,26 @@ describe('hapi-time', () => {
 
     });
 
-    it('should cancel a disabled every job', (done) => {
+    it('should run a scheduled and a recurrent job', (done) => {
         server.register({
             register: HapiTime,
             options: {
                 mongoUri: MongoUri,
                 jobs: JobsDir,
                 every: {
-                    'say-hello': {
-                        enabled: false
-                    }
+                    'say-hello': '10 seconds'
+                },
+                schedule: {
+                    'every day at 3am': 'i-am-your-father'
                 }
             }
         }, (err) => {
             if (!err) {
-                deleteJobWithDelay('say-hello', done);
+                done();
             } else {
                 done(err);
             }
         });
-
     });
 
     it('should run an every job enabled with interval', (done) => {
@@ -113,7 +111,7 @@ describe('hapi-time', () => {
             }
         }, (err) => {
             if (!err) {
-                deleteJobWithDelay('say-hello', done);
+                done();
             } else {
                 done(err);
             }
@@ -133,29 +131,7 @@ describe('hapi-time', () => {
             }
         }, (err) => {
             if (!err) {
-                deleteJobWithDelay('say-hello', done);
-            } else {
-                done(err);
-            }
-        });
-    });
-
-    it('should cancel a disabled scheduled job', (done) => {
-        server.register({
-            register: HapiTime,
-            options: {
-                mongoUri: MongoUri,
-                jobs: JobsDir,
-                schedule: {
-                    'every day at 3am': {
-                        job: 'say-hello',
-                        enabled: false
-                    }
-                }
-            }
-        }, (err) => {
-            if (!err) {
-                deleteJobWithDelay('say-hello', done);
+                done();
             } else {
                 done(err);
             }
@@ -163,6 +139,7 @@ describe('hapi-time', () => {
     });
 
     after((done) => {
-        done();
+        deleteAllRemainingJobs(done);
     });
+
 });

@@ -60,6 +60,7 @@ exports.register = function (server, options, next) {
 
     // Retrieve all the jobs from the file system and define them in Agenda
     let jobs = RequireAll(options.jobs);
+
     _.forIn(jobs, (value, key) => {
         let name;
         let method;
@@ -87,44 +88,38 @@ exports.register = function (server, options, next) {
     agenda.on('ready', () => {
         server.log(['agenda', 'ready']);
 
-        // https://github.com/rschmukler/agenda#everyinterval-name-data-options-cb
-        if (options.every) {
-            _.forIn(options.every, (opts, jobName) => {
-                var interval = (typeof opts === 'string') ? opts : opts.interval;
-                var enabled = (opts.enabled !== undefined)? opts.enabled : true;
+        agenda.cancel({}, (err, numRemoved) => {
+            if (err) {
+                throw err;
+            }
 
-                if (enabled === false) {
-                    return agenda.cancel({name: jobName}, function(err) {
-                        if (err) {
-                            throw err;
-                        }
-                    });
-                }
-                agenda.every(interval, jobName);
-            });
-        }
+            if (numRemoved > 0) {
+                server.log(['agenda'], numRemoved + ' jobs cancelled.');
+            }
 
-        // https://github.com/rschmukler/agenda#schedulewhen-name-data-cb
-        if (options.schedule) {
-            _.forIn(options.schedule, (opts, when) => {
-                let jobName = (typeof opts === 'string') ? opts : opts.job;
-                let enabled = (opts.enabled !== undefined) ? opts.enabled : true;
+            // https://github.com/rschmukler/agenda#everyinterval-name-data-options-cb
+            if (options.every) {
+                _.forIn(options.every, (opts, jobName) => {
+                    var interval = (typeof opts === 'string') ? opts : opts.interval;
+                    // var enabled = (opts.enabled !== undefined)? opts.enabled : true;
+                    agenda.every(interval, jobName);
+                });
+            }
 
-                if ((typeof jobName === 'string' && opts.job !== '')) {
-                    if (enabled === false) {
-                        return agenda.cancel({ name: jobName }, (err) => {
-                            if (err) {
-                                throw err;
-                            }
-                        });
-                    }
-                    else {
+            // https://github.com/rschmukler/agenda#schedulewhen-name-data-cb
+            if (options.schedule) {
+                _.forIn(options.schedule, (opts, when) => {
+                    let jobName = (typeof opts === 'string') ? opts : opts.job;
+                    // let enabled = (opts.enabled !== undefined) ? opts.enabled : true;
+
+                    if ((typeof jobName === 'string' && opts.job !== '')) {
                         agenda.schedule(when, jobName);
                     }
-                }
-            });
-        }
-        agenda.start();
+                });
+            }
+            agenda.start();
+            next();
+        });
     });
 
     // http://hapijs.com/api#server-events
@@ -137,8 +132,6 @@ exports.register = function (server, options, next) {
 
     // http://hapijs.com/api#serverbindcontext
     server.bind({ agenda: agenda });
-
-    next();
 };
 
 exports.register.attributes = {
