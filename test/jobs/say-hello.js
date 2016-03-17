@@ -1,5 +1,6 @@
 'use strict';
 
-module.exports = function(data, done) {
-    console.log('Hello world');
+module.exports = (server, data, done) => {
+    server.log(['agenda', 'job'], 'Hello world');
+    done();
 };

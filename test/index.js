@@ -1,42 +1,40 @@
 'use strict';
 
 const Hapi = require('hapi');
-const HapiSchedule = require('../')
+const HapiTime = require('../');
 
-const Code = require('code');
+// const Code = require('code');
 const Lab = require('lab');
 const lab = exports.lab = Lab.script();
 
-const expect = Code.expect;
+// const expect = Code.expect;
 
 const describe = lab.describe;
 const it = lab.it;
 const beforeEach = lab.beforeEach;
 const afterEach = lab.afterEach;
+const after = lab.after;
 
-const MongoUri = 'localhost:27017/scheduled_tasks';
+const MongoUri = 'localhost:27017/schedule_jobs_test';
 const JobsDir = __dirname + '/jobs';
 
-let server;
+let server = null;
 
-describe('hapi-schedule', () => {
+describe('hapi-time', () => {
 
     beforeEach((done) => {
         server = new Hapi.Server();
         server.connection();
-
         done();
     });
 
     afterEach((done) => {
-        // HapiAgenda.agenda.purge();
-
         done();
     });
 
     it('should fail if no mongoUri is specified', (done) => {
         server.register({
-            register: HapiSchedule,
+            register: HapiTime,
             options: {}
         }, (err) => {
             if (err) {
@@ -45,36 +43,64 @@ describe('hapi-schedule', () => {
         });
     });
 
-    it('should run every jobs', (done) => {
+    it('should run an every job', (done) => {
         server.register({
-            register: HapiSchedule,
+            register: HapiTime,
             options: {
                 mongoUri: MongoUri,
                 jobs: JobsDir,
+                every: {
+                    'say-hello': '10 seconds'
+                }
             }
         }, (err) => {
             if (!err) {
-                done();
+                setTimeout(() => {
+                    const agenda = server.plugins['hapi-time'].agenda;
+                    agenda.cancel({name: 'say-hello'}, function(err, numRemoved) {
+                        if (!err && numRemoved == 1) {
+                            done();
+                        } else {
+                            done(err);
+                        }
+                    });
+                }, 2000);
+            } else {
+                done(err);
+            }
+        });
+
+    });
+
+    it('should run a scheduled job', (done) => {
+        server.register({
+            register: HapiTime,
+            options: {
+                mongoUri: MongoUri,
+                jobs: JobsDir,
+                schedule: {
+                    'every day at 3am': 'say-hello'
+                }
+            }
+        }, (err) => {
+            if (!err) {
+                setTimeout(() => {
+                    const agenda = server.plugins['hapi-time'].agenda;
+                    agenda.cancel({name: 'say-hello'}, function(err, numRemoved) {
+                        if (!err && numRemoved == 1) {
+                            done();
+                        } else {
+                            done(err);
+                        }
+                    });
+                }, 2000);
+            } else {
+                done(err);
             }
         });
     });
 
-    // it('should run scheduled jobs', (done) => {
-    //     server.register({
-    //         register: HapiSchedule,
-    //         options: {
-    //             mongoUri: MongoUri,
-    //             jobsDir: JobsDir,
-    //             schedule: {
-    //                 'every day at 3am': 'say-hello'
-    //             }
-    //         }
-    //     }, (err) => {
-    //         if (err) {
-    //             done(err);
-    //         }
-    //         done();
-    //     });
-    // });
-
+    after((done) => {
+        done();
+    });
 });

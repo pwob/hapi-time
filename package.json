@@ -4,7 +4,7 @@
   "description": "Hapi tasks scheduling",
   "main": "index.js",
   "scripts": {
-    "test": "lab -c"
+    "test": "lab -vcLD -m 5000"
   },
   "keywords": [
     "schedule",
