@@ -20,6 +20,19 @@ const JobsDir = __dirname + '/jobs';
 
 let server = null;
 
+function deleteJobWithDelay(jobName, done) {
+    setTimeout(() => {
+        const agenda = server.plugins['hapi-time'].agenda;
+        agenda.cancel({ name: jobName }, function(err, numRemoved) {
+            if (!err && numRemoved == 1) {
+                done();
+            } else {
+                done(err);
+            }
+        });
+    }, 100);
+}
+
 describe('hapi-time', () => {
 
     beforeEach((done) => {
@@ -55,16 +68,7 @@ describe('hapi-time', () => {
             }
         }, (err) => {
             if (!err) {
-                setTimeout(() => {
-                    const agenda = server.plugins['hapi-time'].agenda;
-                    agenda.cancel({name: 'say-hello'}, function(err, numRemoved) {
-                        if (!err && numRemoved == 1) {
-                            done();
-                        } else {
-                            done(err);
-                        }
-                    });
-                }, 100);
+                deleteJobWithDelay('say-hello', done);
             } else {
                 done(err);
             }
@@ -86,16 +90,7 @@ describe('hapi-time', () => {
             }
         }, (err) => {
             if (!err) {
-                setTimeout(() => {
-                    const agenda = server.plugins['hapi-time'].agenda;
-                    agenda.cancel({name: 'say-hello'}, function(err, numRemoved) {
-                        if (!err && numRemoved == 1) {
-                            done();
-                        } else {
-                            done(err);
-                        }
-                    });
-                }, 100);
+                deleteJobWithDelay('say-hello', done);
             } else {
                 done(err);
             }
@@ -118,16 +113,7 @@ describe('hapi-time', () => {
             }
         }, (err) => {
             if (!err) {
-                setTimeout(() => {
-                    const agenda = server.plugins['hapi-time'].agenda;
-                    agenda.cancel({name: 'say-hello'}, function(err, numRemoved) {
-                        if (!err && numRemoved == 1) {
-                            done();
-                        } else {
-                            done(err);
-                        }
-                    });
-                }, 100);
+                deleteJobWithDelay('say-hello', done);
             } else {
                 done(err);
             }
@@ -147,16 +133,7 @@ describe('hapi-time', () => {
             }
         }, (err) => {
             if (!err) {
-                setTimeout(() => {
-                    const agenda = server.plugins['hapi-time'].agenda;
-                    agenda.cancel({name: 'say-hello'}, function(err, numRemoved) {
-                        if (!err && numRemoved == 1) {
-                            done();
-                        } else {
-                            done(err);
-                        }
-                    });
-                }, 100);
+                deleteJobWithDelay('say-hello', done);
             } else {
                 done(err);
             }
@@ -178,16 +155,7 @@ describe('hapi-time', () => {
             }
         }, (err) => {
             if (!err) {
-                setTimeout(() => {
-                    const agenda = server.plugins['hapi-time'].agenda;
-                    agenda.cancel({name: 'say-hello'}, function(err, numRemoved) {
-                        if (!err && numRemoved == 1) {
-                            done();
-                        } else {
-                            done(err);
-                        }
-                    });
-                }, 100);
+                deleteJobWithDelay('say-hello', done);
             } else {
                 done(err);
             }
