@@ -1,10 +1,14 @@
 language: node_js
 services: mongodb
 node_js:
-  - "4"
-  - "5"
+    - "4"
+    - "5"
 script:
-  - npm test
+    - npm test
 before_script:
+    - sudo apt-get update
+    - sudo apt-get install -y mongodb-org=2.6.6 mongodb-org-server=2.6.6 mongodb-org-shell=2.6.6 mongodb-org-mongos=2.6.6 mongodb-org-tools=2.6.6
+    - sleep 15 #mongo may not be responded directly. See http://docs.travis-ci.com/user/database-setup/#MongoDB
+    - mongo --version
 after_script:
-  - lab -r lcov | ./node_modules/.bin/coveralls
+    - lab -r lcov | ./node_modules/.bin/coveralls
