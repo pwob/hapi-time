@@ -94,14 +94,13 @@ exports.register = function (server, options, next) {
             }
 
             if (numRemoved > 0) {
-                server.log(['agenda'], numRemoved + ' jobs cancelled.');
+                server.log(['agenda', 'delete'], { jobsRemoved: numRemoved });
             }
 
             // https://github.com/rschmukler/agenda#everyinterval-name-data-options-cb
             if (options.every) {
                 _.forIn(options.every, (opts, jobName) => {
                     var interval = (typeof opts === 'string') ? opts : opts.interval;
-                    // var enabled = (opts.enabled !== undefined)? opts.enabled : true;
                     agenda.every(interval, jobName);
                 });
             }
@@ -110,7 +109,6 @@ exports.register = function (server, options, next) {
             if (options.schedule) {
                 _.forIn(options.schedule, (opts, when) => {
                     let jobName = (typeof opts === 'string') ? opts : opts.job;
-                    // let enabled = (opts.enabled !== undefined) ? opts.enabled : true;
 
                     if ((typeof jobName === 'string' && opts.job !== '')) {
                         agenda.schedule(when, jobName);

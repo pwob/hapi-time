@@ -2,12 +2,13 @@
 
 const Hapi = require('hapi');
 const HapiTime = require('../');
+const Moment = require('moment-timezone');
 
-// const Code = require('code');
+const Code = require('code');
 const Lab = require('lab');
 const lab = exports.lab = Lab.script();
 
-// const expect = Code.expect;
+const expect = Code.expect;
 
 const describe = lab.describe;
 const it = lab.it;
@@ -21,9 +22,24 @@ const JobsDir = __dirname + '/jobs';
 
 let server = null;
 
+function agenda() {
+    return server.plugins['hapi-time'].agenda;
+}
+
+function getJobIfExists(jobName, cb) {
+    agenda().jobs({name: jobName}, function(err, jobs) {
+        return cb(err, jobs[0]);
+    });
+}
+
+function getAllJobs(cb) {
+    agenda().jobs({}, function(err, jobs) {
+        return cb(err, jobs);
+    });
+}
+
 function deleteAllRemainingJobs(done) {
-    const agenda = server.plugins['hapi-time'].agenda;
-    agenda.cancel({}, function(err, numRemoved) {
+    agenda().cancel({}, function(err, numRemoved) {
         if (!err && numRemoved == 1) {
             done();
         } else {
@@ -67,7 +83,15 @@ describe('hapi-time', () => {
             }
         }, (err) => {
             if (!err) {
-                done();
+                getJobIfExists('say-hello', (err, job) => {
+                    if (err) {
+                        done(err);
+                    } else {
+                        expect(job.attrs.name).to.equal('say-hello');
+                        expect(job.attrs.repeatInterval).to.equal('10 seconds');
+                        done();
+                    }
+                });
             } else {
                 done(err);
             }
@@ -83,14 +107,21 @@ describe('hapi-time', () => {
                 jobs: JobsDir,
                 every: {
                     'say-hello': {
-                        interval: '10 seconds',
-                        enabled: true
+                        interval: '10 seconds'
                     }
                 }
             }
         }, (err) => {
             if (!err) {
-                done();
+                getJobIfExists('say-hello', (err, job) => {
+                    if (err) {
+                        done(err);
+                    } else {
+                        expect(job.attrs.name).to.equal('say-hello');
+                        expect(job.attrs.repeatInterval).to.equal('10 seconds');
+                        done();
+                    }
+                });
             } else {
                 done(err);
             }
@@ -110,7 +141,20 @@ describe('hapi-time', () => {
             }
         }, (err) => {
             if (!err) {
-                done();
+                getJobIfExists('say-hello', (err, job) => {
+                    if (err) {
+                        done(err);
+                    } else {
+                        expect(job.attrs.name).to.equal('say-hello');
+
+                        const expectedDate = Moment(new Date()).add(1, 'days').toDate();
+                        expectedDate.setHours(3);
+                        expect(Moment(job.attrs.nextRunAt).toDate().getDate()).to.equal(expectedDate.getDate());
+                        expect(Moment(job.attrs.nextRunAt).toDate().getHours()).to.equal(expectedDate.getHours());
+
+                        done();
+                    }
+                });
             } else {
                 done(err);
             }
@@ -132,7 +176,22 @@ describe('hapi-time', () => {
             }
         }, (err) => {
             if (!err) {
-                done();
+                getAllJobs((err, jobs) => {
+                    if (err) {
+                        done(err);
+                    } else {
+                        expect(jobs[0].attrs.name).to.equal('say-hello');
+                        expect(jobs[0].attrs.repeatInterval).to.equal('10 seconds');
+                        expect(jobs[1].attrs.name).to.equal('i-am-your-father');
+
+                        const expectedDate = Moment(new Date()).add(1, 'days').toDate();
+                        expectedDate.setHours(3);
+                        expect(Moment(jobs[1].attrs.nextRunAt).toDate().getDate()).to.equal(expectedDate.getDate());
+                        expect(Moment(jobs[1].attrs.nextRunAt).toDate().getHours()).to.equal(expectedDate.getHours());
+
+                        done();
+                    }
+                });
             } else {
                 done(err);
             }
