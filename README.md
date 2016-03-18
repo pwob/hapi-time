@@ -6,6 +6,7 @@ Hapi plugin that allows you to run schedule and recurrent jobs using [Agenda](ht
 [![Dependencies Status](https://david-dm.org/angelstoone/hapi-time.svg)](https://david-dm.org/angelstoone/hapi-time)
 [![DevDependencies Status](https://david-dm.org/angelstoone/hapi-time/dev-status.svg)](https://david-dm.org/angelstoone/hapi-time#info=devDependencies)
 [![Known Vulnerabilities](https://snyk.io/test/npm/hapi-time/badge.svg)](https://snyk.io/test/npm/hapi-time)
+[![Coverage Status](https://coveralls.io/repos/github/angelstoone/hapi-time/badge.svg?branch=master)](https://coveralls.io/github/angelstoone/hapi-time?branch=master)
 
 ## Installation
 ```
