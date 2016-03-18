@@ -4,8 +4,12 @@
   "description": "Hapi tasks scheduling",
   "main": "index.js",
   "scripts": {
-    "test": "lab -vcLD",
+    "test": "snyk test && lab -vcLD",
     "test-cover": "lab -vcLD -r html -o ./test/coverage.html && open ./test/coverage.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/angelstoone/hapi-time.git"
   },
   "keywords": [
     "schedule",
@@ -28,6 +32,7 @@
     "code": "^2.1.0",
     "hapi": "^13.2.1",
     "lab": "^10.2.0",
-    "moment-timezone": "^0.5.2"
+    "moment-timezone": "^0.5.2",
+    "snyk": "^1.12.0"
   }
 }
