@@ -171,44 +171,6 @@ describe('hapi-time', () => {
         });
     });
 
-    it('should run a repeating job with data and options', (done) => {
-        server.register({
-            register: HapiTime,
-            options: {
-                mongoUri: MongoUri,
-                jobs: JobsDir,
-                every: {
-                    '10 seconds': {
-                        'say-hello' : {
-                            data: {
-                                userId: 1
-                            },
-                            options: {
-                                timezone: 'America/New_York'
-                            }
-                        }
-                    }
-                }
-            }
-        }, (err) => {
-            if (!err) {
-                getJobIfExists('say-hello', (err, job) => {
-                    if (err) {
-                        done(err);
-                    } else {
-                        expect(job.attrs.name).to.equal('say-hello');
-                        expect(job.attrs.repeatInterval).to.equal('10 seconds');
-                        expect(job.attrs.data.userId).to.equal(1);
-
-                        done();
-                    }
-                });
-            } else {
-                done(err);
-            }
-        });
-    });
-
     it('should run a multiple repeating jobs at the same interval', (done) => {
         server.register({
             register: HapiTime,
@@ -234,6 +196,101 @@ describe('hapi-time', () => {
                             } else {
                                 expect(job.attrs.name).to.equal('i-am-your-father');
                                 expect(job.attrs.repeatInterval).to.equal('10 seconds');
+                                done();
+                            }
+                        });
+                    }
+                });
+            } else {
+                done(err);
+            }
+        });
+    });
+
+    it('should run a multiple repeating jobs at the same interval without data', (done) => {
+        server.register({
+            register: HapiTime,
+            options: {
+                mongoUri: MongoUri,
+                jobs: JobsDir,
+                every: {
+                    '10 seconds': [{
+                        'say-hello': {}
+                    }, {
+                        'i-am-your-father': {}
+                    }]
+                }
+            }
+        }, (err) => {
+            if (!err) {
+                getJobIfExists('say-hello', (err, job) => {
+                    if (err) {
+                        done(err);
+                    } else {
+                        expect(job.attrs.name).to.equal('say-hello');
+                        expect(job.attrs.repeatInterval).to.equal('10 seconds');
+
+                        getJobIfExists('i-am-your-father', (err, job) => {
+                            if (err) {
+                                done(err);
+                            } else {
+                                expect(job.attrs.name).to.equal('i-am-your-father');
+                                expect(job.attrs.repeatInterval).to.equal('10 seconds');
+                                done();
+                            }
+                        });
+                    }
+                });
+            } else {
+                done(err);
+            }
+        });
+    });
+
+    it('should run a multiple repeating jobs at the same interval with data', (done) => {
+        server.register({
+            register: HapiTime,
+            options: {
+                mongoUri: MongoUri,
+                jobs: JobsDir,
+                every: {
+                    '10 seconds': [
+                        {
+                            'say-hello' : {
+                                data: {
+                                    userId: 1
+                                }
+
+                            }
+                        },
+                        {
+                            'i-am-your-father': {
+                                data: {
+                                    userId: 2
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }, (err) => {
+            if (!err) {
+                getJobIfExists('say-hello', (err, job) => {
+                    if (err) {
+                        done(err);
+                    } else {
+                        expect(job.attrs.name).to.equal('say-hello');
+                        expect(job.attrs.repeatInterval).to.equal('10 seconds');
+                        expect(job.attrs.data.userId).to.equal(1);
+
+                        getJobIfExists('i-am-your-father', (err, job) => {
+                            if (err) {
+                                done(err);
+                            } else {
+                                expect(job.attrs.name).to.equal('i-am-your-father');
+                                expect(job.attrs.repeatInterval).to.equal('10 seconds');
+                                expect(job.attrs.data.userId).to.equal(2);
+
                                 done();
                             }
                         });
@@ -494,7 +551,58 @@ describe('hapi-time', () => {
         });
     });
 
-    it('should run a multiple schedule jobs at the same time', (done) => {
+    it('should run a multiple schedule jobs at the same time without data', (done) => {
+        server.register({
+            register: HapiTime,
+            options: {
+                mongoUri: MongoUri,
+                jobs: JobsDir,
+                schedule: {
+                    'every day at 3am': [
+                        {
+                            'say-hello' : {
+                            }
+                        },
+                        {
+                            'i-am-your-father': {
+                            }
+                        }
+                    ]
+                }
+            }
+        }, (err) => {
+            if (!err) {
+                getJobIfExists('say-hello', (err, job) => {
+                    if (err) {
+                        done(err);
+                    } else {
+                        const expectedDate = Moment(new Date()).add(1, 'days').toDate();
+                        expectedDate.setHours(3);
+
+                        expect(job.attrs.name).to.equal('say-hello');
+                        expect(Moment(job.attrs.nextRunAt).toDate().getDate()).to.equal(expectedDate.getDate());
+                        expect(Moment(job.attrs.nextRunAt).toDate().getHours()).to.equal(expectedDate.getHours());
+
+                        getJobIfExists('i-am-your-father', (err, job) => {
+                            if (err) {
+                                done(err);
+                            } else {
+                                expect(job.attrs.name).to.equal('i-am-your-father');
+                                expect(Moment(job.attrs.nextRunAt).toDate().getDate()).to.equal(expectedDate.getDate());
+                                expect(Moment(job.attrs.nextRunAt).toDate().getHours()).to.equal(expectedDate.getHours());
+
+                                done();
+                            }
+                        });
+                    }
+                });
+            } else {
+                done(err);
+            }
+        });
+    });
+
+    it('should run a multiple schedule jobs at the same time with data', (done) => {
         server.register({
             register: HapiTime,
             options: {

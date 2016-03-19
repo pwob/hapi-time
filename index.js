@@ -107,14 +107,10 @@ exports.register = function (server, options, next) {
                                     agenda.every(jobInterval, value);
                                 } else {
                                     if (value.data != undefined) {
-                                        if (value.data == undefined) {
-                                            agenda.every(jobInterval, key);
+                                        if (value.options == undefined) {
+                                            agenda.every(jobInterval, key, value.data);
                                         } else {
-                                            if (value.options == undefined) {
-                                                agenda.every(jobInterval, key, value.data);
-                                            } else {
-                                                agenda.every(jobInterval, key, value.data, value.options);
-                                            }
+                                            agenda.every(jobInterval, key, value.data, value.options);
                                         }
                                     }
                                     else {
@@ -126,7 +122,7 @@ exports.register = function (server, options, next) {
                                                     agenda.every(jobInterval, k, v.data, v.options);
                                                 }
                                             } else {
-                                                // TODO throw an error
+                                                agenda.every(jobInterval, k);
                                             }
                                         });
                                     }
@@ -147,11 +143,7 @@ exports.register = function (server, options, next) {
                                     agenda.schedule(when, value);
                                 } else {
                                     if (value.data != undefined) {
-                                        if (value.data == undefined) {
-                                            agenda.schedule(when, key);
-                                        } else {
-                                            agenda.schedule(when, key, value.data);
-                                        }
+                                        agenda.schedule(when, key, value.data);
                                     } else {
                                         _.forIn(value, (v, k) => {
                                             if (v.data == undefined) {
