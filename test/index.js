@@ -87,9 +87,11 @@ describe('hapi-time', () => {
                     if (err) {
                         done(err);
                     } else {
-                        expect(job.attrs.name).to.equal('say-hello');
-                        expect(job.attrs.repeatInterval).to.equal('10 seconds');
-                        done();
+                        setTimeout(() => {
+                            expect(job.attrs.name).to.equal('say-hello');
+                            expect(job.attrs.repeatInterval).to.equal('10 seconds');
+                            done();
+                        }, 25);
                     }
                 });
             } else {
@@ -123,11 +125,13 @@ describe('hapi-time', () => {
                     if (err) {
                         done(err);
                     } else {
-                        expect(job.attrs.name).to.equal('i-am-your-father');
-                        expect(job.attrs.repeatInterval).to.equal('10 seconds');
-                        expect(job.attrs.data.userId).to.equal(1);
+                        setTimeout(() => {
+                            expect(job.attrs.name).to.equal('i-am-your-father');
+                            expect(job.attrs.repeatInterval).to.equal('10 seconds');
+                            expect(job.attrs.data.userId).to.equal(1);
 
-                        done();
+                            done();
+                        }, 25);
                     }
                 });
             } else {
@@ -158,11 +162,13 @@ describe('hapi-time', () => {
                     if (err) {
                         done(err);
                     } else {
-                        expect(job.attrs.name).to.equal('say-hello');
-                        expect(job.attrs.repeatInterval).to.equal('10 seconds');
-                        expect(job.attrs.data.userId).to.equal(1);
+                        setTimeout(() => {
+                            expect(job.attrs.name).to.equal('say-hello');
+                            expect(job.attrs.repeatInterval).to.equal('10 seconds');
+                            expect(job.attrs.data.userId).to.equal(1);
 
-                        done();
+                            done();
+                        }, 25);
                     }
                 });
             } else {
@@ -194,9 +200,11 @@ describe('hapi-time', () => {
                             if (err) {
                                 done(err);
                             } else {
-                                expect(job.attrs.name).to.equal('i-am-your-father');
-                                expect(job.attrs.repeatInterval).to.equal('10 seconds');
-                                done();
+                                setTimeout(() => {
+                                    expect(job.attrs.name).to.equal('i-am-your-father');
+                                    expect(job.attrs.repeatInterval).to.equal('10 seconds');
+                                    done();
+                                }, 25);
                             }
                         });
                     }
@@ -234,9 +242,11 @@ describe('hapi-time', () => {
                             if (err) {
                                 done(err);
                             } else {
-                                expect(job.attrs.name).to.equal('i-am-your-father');
-                                expect(job.attrs.repeatInterval).to.equal('10 seconds');
-                                done();
+                                setTimeout(() => {
+                                    expect(job.attrs.name).to.equal('i-am-your-father');
+                                    expect(job.attrs.repeatInterval).to.equal('10 seconds');
+                                    done();
+                                }, 25);
                             }
                         });
                     }
@@ -286,11 +296,13 @@ describe('hapi-time', () => {
                             if (err) {
                                 done(err);
                             } else {
-                                expect(job.attrs.name).to.equal('i-am-your-father');
-                                expect(job.attrs.repeatInterval).to.equal('10 seconds');
-                                expect(job.attrs.data.userId).to.equal(2);
+                                setTimeout(() => {
+                                    expect(job.attrs.name).to.equal('i-am-your-father');
+                                    expect(job.attrs.repeatInterval).to.equal('10 seconds');
+                                    expect(job.attrs.data.userId).to.equal(2);
 
-                                done();
+                                    done();
+                                }, 25);
                             }
                         });
                     }
@@ -347,11 +359,13 @@ describe('hapi-time', () => {
                             if (err) {
                                 done(err);
                             } else {
-                                expect(job.attrs.name).to.equal('i-am-your-father');
-                                expect(job.attrs.repeatInterval).to.equal('10 seconds');
-                                expect(job.attrs.data.userId).to.equal(2);
+                                setTimeout(() => {
+                                    expect(job.attrs.name).to.equal('i-am-your-father');
+                                    expect(job.attrs.repeatInterval).to.equal('10 seconds');
+                                    expect(job.attrs.data.userId).to.equal(2);
 
-                                done();
+                                    done();
+                                }, 25);
                             }
                         });
                     }
@@ -568,12 +582,14 @@ describe('hapi-time', () => {
                             if (err) {
                                 done(err);
                             } else {
-                                expect(job.attrs.name).to.equal('i-am-your-father');
-                                expect(Moment(job.attrs.nextRunAt).toDate().getDate()).to.equal(expectedDate.getDate());
-                                expect(Moment(job.attrs.nextRunAt).toDate().getHours()).to.equal(expectedDate.getHours());
-                                expect(job.attrs.data.userId).to.equal(2);
+                                setTimeout(() => {
+                                    expect(job.attrs.name).to.equal('i-am-your-father');
+                                    expect(Moment(job.attrs.nextRunAt).toDate().getDate()).to.equal(expectedDate.getDate());
+                                    expect(Moment(job.attrs.nextRunAt).toDate().getHours()).to.equal(expectedDate.getHours());
+                                    expect(job.attrs.data.userId).to.equal(2);
 
-                                done();
+                                    done();
+                                }, 25);
                             }
                         });
                     }
@@ -603,16 +619,18 @@ describe('hapi-time', () => {
                     if (err) {
                         done(err);
                     } else {
-                        expect(jobs[0].attrs.name).to.equal('say-hello');
-                        expect(jobs[0].attrs.repeatInterval).to.equal('10 seconds');
-                        expect(jobs[1].attrs.name).to.equal('i-am-your-father');
+                        setTimeout(() => {
+                            expect(jobs[0].attrs.name).to.equal('say-hello');
+                            expect(jobs[0].attrs.repeatInterval).to.equal('10 seconds');
+                            expect(jobs[1].attrs.name).to.equal('i-am-your-father');
 
-                        const expectedDate = Moment(new Date()).add(1, 'days').toDate();
-                        expectedDate.setHours(3);
-                        expect(Moment(jobs[1].attrs.nextRunAt).toDate().getDate()).to.equal(expectedDate.getDate());
-                        expect(Moment(jobs[1].attrs.nextRunAt).toDate().getHours()).to.equal(expectedDate.getHours());
+                            const expectedDate = Moment(new Date()).add(1, 'days').toDate();
+                            expectedDate.setHours(3);
+                            expect(Moment(jobs[1].attrs.nextRunAt).toDate().getDate()).to.equal(expectedDate.getDate());
+                            expect(Moment(jobs[1].attrs.nextRunAt).toDate().getHours()).to.equal(expectedDate.getHours());
 
-                        done();
+                            done();
+                        }, 25);
                     }
                 });
             } else {
@@ -636,9 +654,11 @@ describe('hapi-time', () => {
                     if (err) {
                         done(err);
                     } else {
-                        expect(job.attrs.name).to.equal('new-user');
-                        expect(job.attrs.data.userId).to.equal(1);
-                        done();
+                        setTimeout(() => {
+                            expect(job.attrs.name).to.equal('new-user');
+                            expect(job.attrs.data.userId).to.equal(1);
+                            done();
+                        }, 25);
                     }
                 });
             } else {
