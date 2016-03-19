@@ -1,5 +1,4 @@
 # Hapi-Time
-Hapi-Time is a job scheduling plugin for [Hapi](hapijs.com) based on [Agenda](https://github.com/rschmukler/agenda).
 
 [![npm version](https://badge.fury.io/js/hapi-time.svg)](http://badge.fury.io/js/hapi-time)
 [![Build Status](https://secure.travis-ci.org/angelstoone/hapi-time.svg)](http://travis-ci.org/angelstoone/hapi-time)
@@ -7,6 +6,8 @@ Hapi-Time is a job scheduling plugin for [Hapi](hapijs.com) based on [Agenda](ht
 [![DevDependencies Status](https://david-dm.org/angelstoone/hapi-time/dev-status.svg)](https://david-dm.org/angelstoone/hapi-time#info=devDependencies)
 [![Known Vulnerabilities](https://snyk.io/test/npm/hapi-time/badge.svg)](https://snyk.io/test/npm/hapi-time)
 [![Coverage Status](https://coveralls.io/repos/github/angelstoone/hapi-time/badge.svg)](https://coveralls.io/github/angelstoone/hapi-time?branch=master)
+
+Hapi-Time is a job scheduling plugin for [Hapi](hapijs.com) based on [Agenda](https://github.com/rschmukler/agenda).
 
 ## Installation
 ```
