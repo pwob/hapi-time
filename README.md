@@ -1,5 +1,5 @@
 # Hapi-Time
-Hapi plugin that allows you to run schedule and recurrent jobs using [Agenda](https://github.com/rschmukler/agenda).
+Hapi-Time is a job scheduling plugin for [Hapi](hapijs.com) based on [Agenda](https://github.com/rschmukler/agenda).
 
 [![npm version](https://badge.fury.io/js/hapi-time.svg)](http://badge.fury.io/js/hapi-time)
 [![Build Status](https://secure.travis-ci.org/angelstoone/hapi-time.svg)](http://travis-ci.org/angelstoone/hapi-time)
