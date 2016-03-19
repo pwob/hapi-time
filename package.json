@@ -1,7 +1,7 @@
 {
   "name": "hapi-time",
   "version": "1.1.0",
-  "description": "Hapi tasks scheduling",
+  "description": "Job scheduling plugin for Hapi based on Agenda.",
   "main": "index.js",
   "scripts": {
     "test": "snyk test && lab -vcLD",
