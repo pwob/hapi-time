@@ -102,7 +102,36 @@ exports.register = function (server, options, next) {
                         if (typeof jobOpts === 'string') {
                             agenda.every(jobInterval, jobOpts);
                         } else {
-                            agenda.every(jobInterval, jobOpts.job);
+                            _.forIn(jobOpts, (value, key) => {
+                                if (typeof value === 'string') {
+                                    agenda.every(jobInterval, value);
+                                } else {
+                                    if (value.data != undefined) {
+                                        if (value.data == undefined) {
+                                            agenda.every(jobInterval, key);
+                                        } else {
+                                            if (value.options == undefined) {
+                                                agenda.every(jobInterval, key, value.data);
+                                            } else {
+                                                agenda.every(jobInterval, key, value.data, value.options);
+                                            }
+                                        }
+                                    }
+                                    else {
+                                        _.forIn(value, (v, k) => {
+                                            if (v.data != undefined) {
+                                                if (v.options == undefined) {
+                                                    agenda.every(jobInterval, k, v.data);
+                                                } else {
+                                                    agenda.every(jobInterval, k, v.data, v.options);
+                                                }
+                                            } else {
+                                                // TODO throw an error
+                                            }
+                                        });
+                                    }
+                                }
+                            });
                         }
                     });
                 }
@@ -113,7 +142,27 @@ exports.register = function (server, options, next) {
                         if (typeof jobOpts === 'string') {
                             agenda.schedule(when, jobOpts);
                         } else {
-                            agenda.schedule(when, jobOpts.job);
+                            _.forIn(jobOpts, (value, key) => {
+                                if (typeof value === 'string') {
+                                    agenda.schedule(when, value);
+                                } else {
+                                    if (value.data != undefined) {
+                                        if (value.data == undefined) {
+                                            agenda.schedule(when, key);
+                                        } else {
+                                            agenda.schedule(when, key, value.data);
+                                        }
+                                    } else {
+                                        _.forIn(value, (v, k) => {
+                                            if (v.data == undefined) {
+                                                agenda.schedule(when, k);
+                                            } else {
+                                                agenda.schedule(when, k, v.data);
+                                            }
+                                        });
+                                    }
+                                }
+                            });
                         }
                     });
                 }
