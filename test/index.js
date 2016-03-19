@@ -106,7 +106,7 @@ describe('hapi-time', () => {
                 jobs: JobsDir,
                 every: {
                     '10 seconds': {
-                        'say-hello' : {
+                        'i-am-your-father' : {
                             data: {
                                 userId: 1
                             },
@@ -119,11 +119,11 @@ describe('hapi-time', () => {
             }
         }, (err) => {
             if (!err) {
-                getJobIfExists('say-hello', (err, job) => {
+                getJobIfExists('i-am-your-father', (err, job) => {
                     if (err) {
                         done(err);
                     } else {
-                        expect(job.attrs.name).to.equal('say-hello');
+                        expect(job.attrs.name).to.equal('i-am-your-father');
                         expect(job.attrs.repeatInterval).to.equal('10 seconds');
                         expect(job.attrs.data.userId).to.equal(1);
 
@@ -260,7 +260,6 @@ describe('hapi-time', () => {
                                 data: {
                                     userId: 1
                                 }
-
                             }
                         },
                         {
