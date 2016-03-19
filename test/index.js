@@ -78,37 +78,7 @@ describe('hapi-time', () => {
                 mongoUri: MongoUri,
                 jobs: JobsDir,
                 every: {
-                    'say-hello': '10 seconds'
-                }
-            }
-        }, (err) => {
-            if (!err) {
-                getJobIfExists('say-hello', (err, job) => {
-                    if (err) {
-                        done(err);
-                    } else {
-                        expect(job.attrs.name).to.equal('say-hello');
-                        expect(job.attrs.repeatInterval).to.equal('10 seconds');
-                        done();
-                    }
-                });
-            } else {
-                done(err);
-            }
-        });
-
-    });
-
-    it('should run a repeating job with options', (done) => {
-        server.register({
-            register: HapiTime,
-            options: {
-                mongoUri: MongoUri,
-                jobs: JobsDir,
-                every: {
-                    'say-hello': {
-                        interval: '10 seconds'
-                    }
+                    '10 seconds': 'say-hello'
                 }
             }
         }, (err) => {
@@ -168,7 +138,7 @@ describe('hapi-time', () => {
                 mongoUri: MongoUri,
                 jobs: JobsDir,
                 every: {
-                    'say-hello': '10 seconds'
+                    '10 seconds': 'say-hello'
                 },
                 schedule: {
                     'every day at 3am': 'i-am-your-father'
@@ -189,6 +159,33 @@ describe('hapi-time', () => {
                         expect(Moment(jobs[1].attrs.nextRunAt).toDate().getDate()).to.equal(expectedDate.getDate());
                         expect(Moment(jobs[1].attrs.nextRunAt).toDate().getHours()).to.equal(expectedDate.getHours());
 
+                        done();
+                    }
+                });
+            } else {
+                done(err);
+            }
+        });
+    });
+
+    it('should run job defined in a sub-directory', (done) => {
+        server.register({
+            register: HapiTime,
+            options: {
+                mongoUri: MongoUri,
+                jobs: JobsDir
+            }
+        }, (err) => {
+            if (!err) {
+
+                agenda().now('new-user', { userId: 1 });
+
+                getJobIfExists('new-user', (err, job) => {
+                    if (err) {
+                        done(err);
+                    } else {
+                        expect(job.attrs.name).to.equal('new-user');
+                        expect(job.attrs.data.userId).to.equal(1);
                         done();
                     }
                 });
