@@ -37,6 +37,43 @@ server.register({
 });
 ```
 
+```javascript
+const HapiTime = require('hapi-time');
+
+server.register({
+    register: HapiTime,
+    options: {
+        mongoUri: 'localhost:27017/schedule_jobs_test',
+        jobs: __dirname + '/jobs',
+        every: {
+            '30 minutes': [ 'say-hello', 'say-bye' ]
+        },
+        schedule: {
+            'every day at 3am': [
+                {
+                    'say-hello' : {
+                        data: {
+                            userId: 1
+                        }
+                    }
+                },
+                {
+                    'say-bye': {
+                        data: {
+                            userId: 2
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}, (err) => {
+    if (!err) {
+        // do something!
+    }
+});
+```
+
 ## Plugin options
 ### `mongoUri`
 MongoDB connection string (example `'localhost:27017/schedule_jobs_test_db'`). Check at the official [MongoDB documentation](https://docs.mongodb.org/manual/reference/connection-string/)
