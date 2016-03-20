@@ -27,15 +27,19 @@ function agenda() {
 }
 
 function getJobIfExists(jobName, cb) {
-    agenda().jobs({name: jobName}, (err, jobs) => {
-        return cb(err, jobs[0]);
-    });
+    setTimeout(() => {
+        agenda().jobs({name: jobName}, (err, jobs) => {
+            return cb(err, jobs[0]);
+        });
+    }, 100);
 }
 
 function getAllJobs(cb) {
-    agenda().jobs({}, (err, jobs) => {
-        return cb(err, jobs);
-    });
+    setTimeout(() => {
+        agenda().jobs({}, (err, jobs) => {
+            return cb(err, jobs);
+        });
+    }, 100);
 }
 
 function deleteAllRemainingJobs(cb) {
