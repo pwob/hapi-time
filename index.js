@@ -1,7 +1,8 @@
 'use strict';
 
 const Agenda = require('agenda');
-const RequireAll = require('require-all');
+const Recursive = require('recursive-readdir');
+const Path = require('path');
 const _ = require('lodash');
 const Joi = require('joi');
 
@@ -59,64 +60,107 @@ exports.register = function (server, options, next) {
     });
 
     // Retrieve all the jobs from the file system and define them in Agenda
-    let jobs = RequireAll(options.jobs);
+    Recursive(options.jobs, function (err, files) {
+        _.forIn(files, (jobFile) => {
+            let jobName = Path.parse(jobFile).name;
+            let jobFunction;
+            let jobOpts = {};
 
-    _.forIn(jobs, (value, key) => {
-        let name;
-        let method;
-        let opts = {};
+            let job = require(jobFile);
+            if (typeof job === 'function') {
+                jobFunction = job;
+            } else {
+                jobName = job.name;
+                jobFunction = job.job;
 
-        if (typeof value === 'function') {
-            name = key;
-            method = value;
-        }
-        else {
-            name = value.name;
-            method = value.job;
+                jobOpts = Object.assign({}, job);
+                delete jobOpts.name;
+                delete jobOpts.job;
+            }
 
-            opts = Object.assign({}, value);
-            delete opts.name;
-            delete opts.job;
-        }
-
-        agenda.define(name, opts, (job, done) => {
-            server.log(['agenda', 'queue'], { jobName: name, job: job.attrs });
-            method(server, job, done);
+            agenda.define(jobName, jobOpts, (agendaJob, done) => {
+                server.log(['agenda', 'queue'], { jobName: jobName, job: agendaJob.attrs });
+                jobFunction(server, agendaJob, done);
+            });
         });
-    });
 
-    agenda.on('ready', () => {
-        server.log(['agenda', 'ready']);
+        agenda.on('ready', () => {
+            server.log(['agenda', 'ready']);
 
-        agenda.cancel({}, (err, numRemoved) => {
-            if (err) {
-                throw err;
-            }
+            agenda.cancel({}, (err, numRemoved) => {
+                if (err) {
+                    throw err;
+                }
 
-            if (numRemoved > 0) {
-                server.log(['agenda', 'delete'], { jobsRemoved: numRemoved });
-            }
+                if (numRemoved > 0) {
+                    server.log(['agenda', 'delete'], { jobsRemoved: numRemoved });
+                }
 
-            // https://github.com/rschmukler/agenda#everyinterval-name-data-options-cb
-            if (options.every) {
-                _.forIn(options.every, (opts, jobName) => {
-                    var interval = (typeof opts === 'string') ? opts : opts.interval;
-                    agenda.every(interval, jobName);
-                });
-            }
+                // https://github.com/rschmukler/agenda#everyinterval-name-data-options-cb
+                if (options.every) {
+                    _.forIn(options.every, (jobOpts, jobInterval) => {
+                        if (typeof jobOpts === 'string') {
+                            agenda.every(jobInterval, jobOpts);
+                        } else {
+                            _.forIn(jobOpts, (value, key) => {
+                                if (typeof value === 'string') {
+                                    agenda.every(jobInterval, value);
+                                } else {
+                                    if (value.data != undefined) {
+                                        if (value.options == undefined) {
+                                            agenda.every(jobInterval, key, value.data);
+                                        } else {
+                                            agenda.every(jobInterval, key, value.data, value.options);
+                                        }
+                                    }
+                                    else {
+                                        _.forIn(value, (v, k) => {
+                                            if (v.data != undefined) {
+                                                if (v.options == undefined) {
+                                                    agenda.every(jobInterval, k, v.data);
+                                                } else {
+                                                    agenda.every(jobInterval, k, v.data, v.options);
+                                                }
+                                            } else {
+                                                agenda.every(jobInterval, k);
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
 
-            // https://github.com/rschmukler/agenda#schedulewhen-name-data-cb
-            if (options.schedule) {
-                _.forIn(options.schedule, (opts, when) => {
-                    let jobName = (typeof opts === 'string') ? opts : opts.job;
-
-                    if ((typeof jobName === 'string' && opts.job !== '')) {
-                        agenda.schedule(when, jobName);
-                    }
-                });
-            }
-            agenda.start();
-            next();
+                // https://github.com/rschmukler/agenda#schedulewhen-name-data-cb
+                if (options.schedule) {
+                    _.forIn(options.schedule, (jobOpts, when) => {
+                        if (typeof jobOpts === 'string') {
+                            agenda.schedule(when, jobOpts);
+                        } else {
+                            _.forIn(jobOpts, (value, key) => {
+                                if (typeof value === 'string') {
+                                    agenda.schedule(when, value);
+                                } else {
+                                    if (value.data != undefined) {
+                                        agenda.schedule(when, key, value.data);
+                                    } else {
+                                        _.forIn(value, (v, k) => {
+                                            if (v.data == undefined) {
+                                                agenda.schedule(when, k);
+                                            } else {
+                                                agenda.schedule(when, k, v.data);
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+                agenda.start();
+                next();
+            });
         });
     });
 

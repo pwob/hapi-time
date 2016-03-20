@@ -1,7 +1,7 @@
 {
   "name": "hapi-time",
-  "version": "1.0.0",
-  "description": "Hapi tasks scheduling",
+  "version": "1.2.0",
+  "description": "Job scheduling plugin for Hapi based on Agenda.",
   "main": "index.js",
   "scripts": {
     "test": "snyk test && lab -vcLD",
@@ -26,7 +26,7 @@
     "agenda": "^0.8.0",
     "joi": "^8.0.4",
     "lodash": "^4.6.1",
-    "require-all": "^2.0.0"
+    "recursive-readdir": "^1.3.0"
   },
   "devDependencies": {
     "code": "^2.1.0",
