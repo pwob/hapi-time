@@ -24,7 +24,7 @@ server.register({
         mongoUri: 'localhost:27017/schedule_jobs_test',
         jobs: __dirname + '/jobs',
         every: {
-            'say-hello': '10 seconds'
+            '10 seconds': 'say-hello'
         },
         schedule: {
             'every day at 3am': 'i-am-your-father'
