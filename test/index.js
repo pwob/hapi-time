@@ -27,23 +27,23 @@ function agenda() {
 }
 
 function getJobIfExists(jobName, cb) {
-    agenda().jobs({name: jobName}, function(err, jobs) {
+    agenda().jobs({name: jobName}, (err, jobs) => {
         return cb(err, jobs[0]);
     });
 }
 
 function getAllJobs(cb) {
-    agenda().jobs({}, function(err, jobs) {
+    agenda().jobs({}, (err, jobs) => {
         return cb(err, jobs);
     });
 }
 
-function deleteAllRemainingJobs(done) {
-    agenda().cancel({}, function(err, numRemoved) {
-        if (!err && numRemoved == 1) {
-            done();
+function deleteAllRemainingJobs(cb) {
+    agenda().cancel({}, (err, numRemoved) => {
+        if (!err && numRemoved > 0) {
+            cb(err, numRemoved);
         } else {
-            done(err);
+            cb(err, 0);
         }
     });
 }
@@ -648,15 +648,24 @@ describe('hapi-time', () => {
     });
 
     afterEach((done) => {
-        server.stop(() => {
+
+        setTimeout(function() {
             if (server.plugins['hapi-time'] != undefined) {
-                agenda().stop();
-                // agenda()._mdb.close(done);
-                deleteAllRemainingJobs(done);
+                deleteAllRemainingJobs((err) => {
+                    if (err) {
+                        done(err);
+                    } else {
+                        server.stop(() => {
+                            agenda().stop();
+                            // agenda()._mdb.close(done);
+                            done();
+                        });
+                    }
+                });
             } else {
                 done();
             }
-        });
+        }, 50);
     });
 
     after((done) => {
