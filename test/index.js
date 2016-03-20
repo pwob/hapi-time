@@ -98,6 +98,41 @@ describe('hapi-time', () => {
         });
     });
 
+    it('should run a repeating job with data', (done) => {
+        server.register({
+            register: HapiTime,
+            options: {
+                mongoUri: MongoUri,
+                jobs: JobsDir,
+                every: {
+                    '10 seconds': {
+                        'say-hello' : {
+                            data: {
+                                userId: 1
+                            }
+                        }
+                    }
+                }
+            }
+        }, (err) => {
+            if (!err) {
+                getJobIfExists('say-hello', (err, job) => {
+                    if (err) {
+                        done(err);
+                    } else {
+                        expect(job.attrs.name).to.equal('say-hello');
+                        expect(job.attrs.repeatInterval).to.equal('10 seconds');
+                        expect(job.attrs.data.userId).to.equal(1);
+
+                        done();
+                    }
+                });
+            } else {
+                done(err);
+            }
+        });
+    });
+
     it('should run a repeating job with data and options', (done) => {
         server.register({
             register: HapiTime,
@@ -124,41 +159,6 @@ describe('hapi-time', () => {
                         done(err);
                     } else {
                         expect(job.attrs.name).to.equal('i-am-your-father');
-                        expect(job.attrs.repeatInterval).to.equal('10 seconds');
-                        expect(job.attrs.data.userId).to.equal(1);
-
-                        done();
-                    }
-                });
-            } else {
-                done(err);
-            }
-        });
-    });
-
-    it('should run a repeating job with data', (done) => {
-        server.register({
-            register: HapiTime,
-            options: {
-                mongoUri: MongoUri,
-                jobs: JobsDir,
-                every: {
-                    '10 seconds': {
-                        'say-hello' : {
-                            data: {
-                                userId: 1
-                            }
-                        }
-                    }
-                }
-            }
-        }, (err) => {
-            if (!err) {
-                getJobIfExists('say-hello', (err, job) => {
-                    if (err) {
-                        done(err);
-                    } else {
-                        expect(job.attrs.name).to.equal('say-hello');
                         expect(job.attrs.repeatInterval).to.equal('10 seconds');
                         expect(job.attrs.data.userId).to.equal(1);
 
