@@ -607,14 +607,22 @@ describe('hapi-time', () => {
                     if (err) {
                         done(err);
                     } else {
-                        expect(jobs[0].attrs.name).to.equal('say-hello');
-                        expect(jobs[0].attrs.repeatInterval).to.equal('10 seconds');
-                        expect(jobs[1].attrs.name).to.equal('i-am-your-father');
+                        let everyJobIndex = 0;
+                        let scheduleJobIndex = 1;
+                        if (jobs[1].attrs.repeatInterval) {
+                            everyJobIndex = 1;
+                            scheduleJobIndex = 0;
+                        }
+
+                        expect(jobs.length).to.equal(2);
+                        expect(jobs[everyJobIndex].attrs.name).to.equal('say-hello');
+                        expect(jobs[everyJobIndex].attrs.repeatInterval).to.equal('10 seconds');
+                        expect(jobs[scheduleJobIndex].attrs.name).to.equal('i-am-your-father');
 
                         const expectedDate = Moment(new Date()).add(1, 'days').toDate();
                         expectedDate.setHours(3);
-                        expect(Moment(jobs[1].attrs.nextRunAt).toDate().getDate()).to.equal(expectedDate.getDate());
-                        expect(Moment(jobs[1].attrs.nextRunAt).toDate().getHours()).to.equal(expectedDate.getHours());
+                        expect(Moment(jobs[scheduleJobIndex].attrs.nextRunAt).toDate().getDate()).to.equal(expectedDate.getDate());
+                        expect(Moment(jobs[scheduleJobIndex].attrs.nextRunAt).toDate().getHours()).to.equal(expectedDate.getHours());
 
                         done();
                     }
