@@ -1,6 +1,6 @@
 {
   "name": "hapi-time",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Job scheduling plugin for Hapi based on Agenda.",
   "main": "index.js",
   "scripts": {
