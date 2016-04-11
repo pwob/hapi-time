@@ -80,7 +80,7 @@ exports.register = function (server, options, next) {
 
             agenda.define(jobName, jobOpts, (agendaJob, done) => {
                 server.log(['agenda', 'queue'], { jobName: jobName, job: agendaJob.attrs });
-                jobFunction.call(server, agendaJob, done);
+                jobFunction(server, agendaJob, done);
             });
         });
 
