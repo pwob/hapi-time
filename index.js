@@ -11,6 +11,7 @@ const Package = require('./package');
 const internals = {
     optionsSchema: Joi.object({
         mongoUri: Joi.string().required(),
+        collection: Joi.string(),
         jobs: Joi.string().required(),
         processEvery: Joi.string().default('30 seconds'),
         maxConcurrency: Joi.number().integer().default(20),
@@ -34,7 +35,7 @@ exports.register = function (server, options, next) {
     // Configuring Agenda
     const agenda = new Agenda();
     agenda
-        .database(options.mongoUri)
+        .database(options.mongoUri, options.collection || 'agendaJobs')
         .processEvery(options.processEvery)
         .maxConcurrency(options.maxConcurrency)
         .defaultConcurrency(options.defaultConcurrency)
